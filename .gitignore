@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Environment / Firebase secrets
+serviceAccountKey.json
+
+# Logs
+*.log
+
+# OS / Editor files
+.DS_Store
+.env
