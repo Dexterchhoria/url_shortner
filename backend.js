@@ -2,7 +2,7 @@
 
 const express = require('express');
 const path = require('path');
-const { admin, database } = require('./firebase');
+const { admin, database } = require('./firebase_config');
 
 const app = express();
 
@@ -12,9 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 // Start server
-app.listen(5003, (err) => {
+const PORT = process.env.PORT || 5003;
+app.listen(PORT, (err) => {
   if (err) console.error(err);
-  else console.log('🚀 APPLICATION IS RUNNING on http://localhost:5003');
+  else console.log(`🚀 APPLICATION IS RUNNING on port ${PORT}`);
 });
 
 // Routes
@@ -46,6 +47,13 @@ app.post('/process', async (req, res) => {
 
     // If user entered a custom alias
     if (custom.length > 0) {
+      // Validate custom alias - only alphanumeric and hyphens
+      if (!/^[a-zA-Z0-9_-]+$/.test(custom)) {
+        return res.status(400).json({
+          message: '❌ Custom alias can only contain letters, numbers, hyphens, and underscores.',
+        });
+      }
+
       const customRef = database.ref('urls/' + custom);
       const snapshot = await customRef.get();
 
