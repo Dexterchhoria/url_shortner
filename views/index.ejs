@@ -231,13 +231,13 @@
     .result.success {
       background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
       border: 2px solid #4caf50;
-      display: block;
+      display: block !important;
     }
 
     .result.error {
       background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
       border: 2px solid #f39c12;
-      display: block;
+      display: block !important;
     }
 
     .result-title {
@@ -397,6 +397,8 @@
       btnText.innerHTML = '<span class="loading"></span>Shortening...';
       resultDiv.style.display = 'none';
 
+      console.log('🚀 Submitting:', { longurl, custom });
+
       try {
         const response = await fetch('/process', {
           method: 'POST',
@@ -404,7 +406,9 @@
           body: JSON.stringify({ longurl, custom }),
         });
 
+        console.log('📡 Response status:', response.status);
         const data = await response.json();
+        console.log('📦 Response data:', data);
 
         if (response.ok) {
           const shortUrl = `${window.location.origin}/${data.shorturl}`;
@@ -429,6 +433,7 @@
           `;
         }
       } catch (error) {
+        console.error('❌ Error:', error);
         resultDiv.className = 'result error';
         resultDiv.innerHTML = `
           <div class="error-message">❌ Something went wrong. Please try again.</div>

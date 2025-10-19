@@ -11,6 +11,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
+// CORS headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Start server
 const PORT = process.env.PORT || 5003;
 app.listen(PORT, (err) => {
@@ -30,12 +41,16 @@ app.get('/favicon.ico', (req, res) => res.status(404).send(''));
 // -----------------------------------------------------------
 app.post('/process', async (req, res) => {
   console.log('📩 POST /process called');
+  console.log('📦 Request body:', req.body);
+  console.log('📋 Headers:', req.headers);
 
   const urlRegEx =
     /(http|https):\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
   const longurl = req.body.longurl;
   const custom = req.body.custom ? req.body.custom.trim() : '';
+
+  console.log('🔗 Processing URL:', longurl, 'Custom:', custom);
 
   // Validate URL
   if (!longurl || !longurl.match(urlRegEx)) {
